@@ -50,7 +50,7 @@ contract SplitPayment is Ownable {
     }
     
     function retrieveLostEth() public onlyOwner {
-        address(owner).transfer(this.balance);
+        owner().transfer(address(this).balance);
     }
     
     function getNumberOfBeneficiaries() public view returns (uint256 length) {
