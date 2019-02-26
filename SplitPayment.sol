@@ -1,10 +1,10 @@
-pragma solidity ^0.4.24;
+pragma solidity ^0.5.4;
 
 import 'github.com/OpenZeppelin/openzeppelin-solidity/contracts/ownership/Ownable.sol';
 
 contract SplitPayment is Ownable {
     
-    address[] public beneficiaries;
+    address payable[] public beneficiaries;
     
     event AddedBeneficiary(address beneficiary);
     
@@ -12,12 +12,12 @@ contract SplitPayment is Ownable {
     
     event LogPayout(address beneficiary, uint256 amount);
     
-    function addBeneficiary(address _beneficiary) public onlyOwner {
+    function addBeneficiary(address payable _beneficiary) public onlyOwner {
         beneficiaries.push(_beneficiary);
         emit AddedBeneficiary(_beneficiary);
     }
     
-    function bulkAddBeneficiaries(address[] _beneficiaries) public onlyOwner {
+    function bulkAddBeneficiaries(address payable[] memory _beneficiaries) public onlyOwner {
         uint256 len = beneficiaries.length;
         
         for (uint256 b = 0; b < len; b++) {
@@ -39,7 +39,7 @@ contract SplitPayment is Ownable {
         }
     }
     
-    function() public payable {
+    function() external payable {
         uint256 len = beneficiaries.length;
         uint256 amount = msg.value / len;
         
@@ -47,10 +47,6 @@ contract SplitPayment is Ownable {
             beneficiaries[b].transfer(amount);
             emit LogPayout(beneficiaries[b], amount);
         }
-    }
-    
-    function retrieveLostEth() public onlyOwner {
-        owner().transfer(address(this).balance);
     }
     
     function getNumberOfBeneficiaries() public view returns (uint256 length) {
