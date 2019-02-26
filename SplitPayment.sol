@@ -49,6 +49,16 @@ contract SplitPayment is Ownable {
         }
     }
     
+    function payOnce(address payable[] memory _beneficiaries) public payable {
+        uint256 len = _beneficiaries.length;
+        uint256 amount = msg.value / len;
+        
+        for (uint256 b = 0; b < len; b++) {
+            _beneficiaries[b].transfer(amount);
+            emit LogPayout(_beneficiaries[b], amount);
+        }
+    }
+    
     function getNumberOfBeneficiaries() public view returns (uint256 length) {
         return beneficiaries.length;
     }
